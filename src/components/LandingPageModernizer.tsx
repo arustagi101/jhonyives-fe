@@ -4,11 +4,12 @@ import { useState } from 'react';
 
 export default function LandingPageModernizer() {
   const [url, setUrl] = useState('');
+  const [submittedUrl, setSubmittedUrl] = useState('');
 
   const handleUrlSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (url) {
-      console.log('URL submitted:', url);
+      setSubmittedUrl(url);
     }
   };
 
@@ -46,7 +47,7 @@ export default function LandingPageModernizer() {
         </div>
 
         {/* Preview Section */}
-        {url && (
+        {submittedUrl && (
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Original Website */}
@@ -61,7 +62,7 @@ export default function LandingPageModernizer() {
                 </div>
                 <div className="relative">
                   <iframe
-                    src={url}
+                    src={submittedUrl}
                     className="w-full h-[600px] border-0"
                     title="Original Website"
                     loading="lazy"
@@ -81,7 +82,7 @@ export default function LandingPageModernizer() {
                 </div>
                 <div className="relative">
                   <iframe
-                    src={url}
+                    src={submittedUrl}
                     className="w-full h-[600px] border-0"
                     title="Modernized Website"
                     loading="lazy"
@@ -93,7 +94,7 @@ export default function LandingPageModernizer() {
         )}
 
         {/* Empty State */}
-        {!url && (
+        {!submittedUrl && (
           <div className="max-w-4xl mx-auto text-center py-20">
             <div className="text-8xl mb-8">🎨</div>
             <h3 className="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-4">
