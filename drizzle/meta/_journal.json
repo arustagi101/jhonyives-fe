@@ -8,6 +8,13 @@
       "when": 1754773190731,
       "tag": "0000_magical_bloodaxe",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1754774208966,
+      "tag": "0001_flashy_johnny_blaze",
+      "breakpoints": true
     }
   ]
 }

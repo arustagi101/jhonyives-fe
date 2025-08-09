@@ -1,14 +1,9 @@
 import { integer, pgTable, varchar, text, timestamp } from "drizzle-orm/pg-core";
-export const usersTable = pgTable("users", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: varchar({ length: 255 }).notNull(),
-  age: integer().notNull(),
-  email: varchar({ length: 255 }).notNull().unique(),
-});
 
 export const webpageScrapesTable = pgTable("webpage_scrapes", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   url: varchar({ length: 2048 }).notNull(),
+  htmlContent: text(),
   markdownContent: text(),
   scrapedAt: timestamp().defaultNow().notNull(),
   freestyleSessionId: varchar({ length: 255 }),
