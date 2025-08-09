@@ -5,10 +5,17 @@ import { useState } from 'react';
 interface ScrapeResult {
   id: number;
   url: string;
+  domain: string;
   title: string;
   contentLength: number;
   scrapedAt: string;
   markdownContent: string;
+  freestyleSessionId: string;
+  repoId: string;
+  devServerEphemeralUrl?: string;
+  devServerMcpUrl?: string;
+  devServerCodeUrl?: string;
+  devServerIsNew?: boolean;
 }
 
 interface ResultsSectionProps {
@@ -38,20 +45,50 @@ export default function ResultsSection({ submittedUrl, scrapedData, loading }: R
       {/* Scraped Data Info */}
       {scrapedData && (
         <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="font-semibold text-green-700 dark:text-green-400">Title:</span>
               <p className="text-green-600 dark:text-green-300 truncate">{scrapedData.title || 'N/A'}</p>
             </div>
             <div>
-              <span className="font-semibold text-green-700 dark:text-green-400">Content Length:</span>
+              <span className="font-semibold text-green-700 dark:text-green-400">Content:</span>
               <p className="text-green-600 dark:text-green-300">{scrapedData.contentLength?.toLocaleString()} chars</p>
             </div>
             <div>
-              <span className="font-semibold text-green-700 dark:text-green-400">Scraped:</span>
-              <p className="text-green-600 dark:text-green-300">{new Date(scrapedData.scrapedAt).toLocaleTimeString()}</p>
+              <span className="font-semibold text-green-700 dark:text-green-400">Domain:</span>
+              <p className="text-green-600 dark:text-green-300 truncate">{scrapedData.domain}</p>
+            </div>
+            <div>
+              <span className="font-semibold text-green-700 dark:text-green-400">Dev Server:</span>
+              <p className="text-green-600 dark:text-green-300">
+                {scrapedData.devServerEphemeralUrl ? '🟢 Live' : '🟡 Setting up...'}
+              </p>
             </div>
           </div>
+          {scrapedData.devServerCodeUrl && (
+            <div className="mt-4 pt-4 border-t border-green-200 dark:border-green-700">
+              <div className="flex gap-2 flex-wrap">
+                <a
+                  href={scrapedData.devServerCodeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-xs rounded-full transition-colors"
+                >
+                  🔧 VS Code Editor
+                </a>
+                {scrapedData.devServerEphemeralUrl && (
+                  <a
+                    href={scrapedData.devServerEphemeralUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-xs rounded-full transition-colors"
+                  >
+                    🚀 Live Preview
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
       {/* Top Bar */}
@@ -121,31 +158,47 @@ export default function ResultsSection({ submittedUrl, scrapedData, loading }: R
 
         {/* Modernized */}
         <div className="bg-gray-100 dark:bg-gray-800 rounded overflow-hidden">
-          <div className="bg-gray-200 dark:bg-gray-700 px-3 py-1.5 text-xs text-gray-600 dark:text-gray-400">
-            Modernized ✨
+          <div className="bg-gray-200 dark:bg-gray-700 px-3 py-1.5 text-xs text-gray-600 dark:text-gray-400 flex items-center justify-between">
+            <span>Modernized ✨</span>
+            {scrapedData?.devServerEphemeralUrl && (
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-green-600 dark:text-green-400">Live Server</span>
+              </div>
+            )}
           </div>
-          {viewMode === 'mobile' ? (
-            <div className="bg-gray-50 dark:bg-gray-900 flex justify-center p-4">
-              <div className="w-72 h-[640px] bg-black rounded-2xl p-1">
-                <div className="w-full h-full bg-white rounded-xl overflow-hidden relative">
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-4 bg-black rounded-b-lg z-10"></div>
-                  <iframe
-                    src={submittedUrl}
-                    className="w-full h-full border-0 scale-50 origin-top-left"
-                    title="Modernized Mobile"
-                    loading="lazy"
-                    style={{ width: '200%', height: '200%' }}
-                  />
+          {scrapedData?.devServerEphemeralUrl ? (
+            viewMode === 'mobile' ? (
+              <div className="bg-gray-50 dark:bg-gray-900 flex justify-center p-4">
+                <div className="w-72 h-[640px] bg-black rounded-2xl p-1">
+                  <div className="w-full h-full bg-white rounded-xl overflow-hidden relative">
+                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-4 bg-black rounded-b-lg z-10"></div>
+                    <iframe
+                      src={scrapedData.devServerEphemeralUrl}
+                      className="w-full h-full border-0 scale-50 origin-top-left"
+                      title="Modernized Mobile"
+                      loading="lazy"
+                      style={{ width: '200%', height: '200%' }}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <iframe
+                src={scrapedData.devServerEphemeralUrl}
+                className="w-full h-[720px] border-0"
+                title="Modernized Desktop"
+                loading="lazy"
+              />
+            )
           ) : (
-            <iframe
-              src={submittedUrl}
-              className="w-full h-[720px] border-0"
-              title="Modernized Desktop"
-              loading="lazy"
-            />
+            <div className="w-full h-[720px] flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+              <div className="text-center p-8">
+                <div className="animate-spin w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+                <p className="text-gray-500 dark:text-gray-400">Setting up development server...</p>
+                <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">This may take a few moments</p>
+              </div>
+            </div>
           )}
         </div>
       </div>

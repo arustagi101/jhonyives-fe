@@ -3,10 +3,17 @@ import { useState } from 'react';
 interface ScrapeResult {
   id: number;
   url: string;
+  domain: string;
   title: string;
   contentLength: number;
   scrapedAt: string;
   markdownContent: string;
+  freestyleSessionId: string;
+  repoId: string;
+  devServerEphemeralUrl?: string;
+  devServerMcpUrl?: string;
+  devServerCodeUrl?: string;
+  devServerIsNew?: boolean;
 }
 
 interface ScrapeResponse {
